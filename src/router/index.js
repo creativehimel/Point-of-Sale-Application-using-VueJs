@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import NProgress from 'nprogress'
+import { useAuthStore } from '@/stores/auth'
 import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
@@ -17,8 +18,59 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue')
+    },
+    {
+      path: '/auth/login',
+      name: 'login',
+      component: () => import('../views/Authentication/Login.vue'),
+      meta: {
+        requiresGuest: true
+      }
+    },
+    {
+      path: '/auth/register',
+      name: 'register',
+      component: () => import('../views/Authentication/Register.vue'),
+      meta: {
+        requiresGuest: true
+      }
+    },
+    {
+      path: '/admin/dashboard',
+      name: 'dashboard',
+      component: () => import('../views/Admin/Dashboard.vue')
     }
   ]
+})
+
+/* Guest Routes Configuration */
+router.beforeEach((to, from, next) => {
+  const auth = useAuthStore()
+  if (to.meta.requiresGuest && auth.isLoggedIn && auth.token !== '') {
+    next('/admin/dashboard')
+  } else {
+    next()
+  }
+})
+
+/* Protection Reset Password Route Configuration */
+router.beforeEach((to, from, next) => {
+  const auth = useAuthStore()
+  if (to.meta.requiresToken && !auth.verifiedOTP) {
+    next('/auth/forget-password')
+  } else {
+    next()
+  }
+})
+
+/* Protected Routes Configuration */
+router.beforeEach((to, from, next) => {
+  const auth = useAuthStore()
+  if (to.meta.requiresAuth && auth.token === '' && !auth.isLoggedIn) {
+    next('/auth/login')
+  } else {
+    next()
+  }
 })
 
 /* NProgress Configuration */
