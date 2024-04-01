@@ -43,7 +43,17 @@ const router = createRouter({
     {
       path: '/admin/brands',
       name: 'brands',
-      component: () => import('@/views/Admin/Brand.vue')
+      component: () => import('@/views/Admin/brand/Brand.vue')
+    },
+    {
+      path: '/admin/brands/create',
+      name: 'brand-create',
+      component: () => import('@/views/Admin/brand/Create.vue')
+    },
+    {
+      path: '/admin/brands/:id',
+      name: 'brand-edit',
+      component: () => import('@/views/Admin/brand/Edit.vue')
     }
   ]
 })
