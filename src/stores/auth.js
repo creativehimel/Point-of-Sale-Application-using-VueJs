@@ -2,14 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { toast } from 'vue3-toastify'
 import router from '@/router/index.js'
-import {
-  register,
-  login,
-  logout,
-  forgetPassword,
-  verifyOTP,
-  resetPassword
-} from '@/services/auth_service.js'
+import { register, login, logout } from '@/services/auth_service.js'
 
 export const useAuthStore = defineStore(
   'auth',
@@ -33,7 +26,6 @@ export const useAuthStore = defineStore(
         } else {
           toast.error(response.data.message)
         }
-        console.log(response.data.message)
       } catch (error) {
         if (error.response) {
           if (error.response.status == 422) {
@@ -83,6 +75,26 @@ export const useAuthStore = defineStore(
       isLoading.value = false
     }
 
+    // Logout Handler Function
+    async function handleLogout() {
+      try {
+        const response = await logout(token.value)
+        toast.success(response.data.message)
+        token.value = ''
+        isLoggedIn.value = false
+        localStorage.clear()
+        setTimeout(() => {
+          router.push('/auth/login')
+        }, 1500)
+      } catch (error) {
+        if (error.request) {
+          toast.error('No response received from the server.')
+        } else {
+          toast.error(error.message)
+        }
+      }
+    }
+
     return {
       isLoading,
       isLoggedIn,
@@ -90,7 +102,8 @@ export const useAuthStore = defineStore(
       userEmail,
       verifiedOTP,
       handleRegister,
-      handleLogin
+      handleLogin,
+      handleLogout
     }
   },
   {

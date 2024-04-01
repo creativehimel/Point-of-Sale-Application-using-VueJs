@@ -1,4 +1,5 @@
 <script setup>
+import { useAuthStore } from '@/stores/auth'
 import { useColorMode } from '@vueuse/core'
 import sidebarMenus from '@/data/sidebarMenu.js'
 import {
@@ -26,6 +27,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { RouterLink } from 'vue-router'
 const mode = useColorMode()
+const authStore = useAuthStore()
 // const isOpen = ref(false)
 </script>
 
@@ -188,12 +190,14 @@ const mode = useColorMode()
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem>
+                <Button @click="authStore.handleLogout">Logout</Button>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </header>
-      <main class="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+      <main class="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-gray-50/65 dark:bg-slate-900">
         <slot />
       </main>
     </div>
